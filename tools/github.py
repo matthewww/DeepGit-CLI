@@ -5,7 +5,7 @@ import logging
 import asyncio
 from pathlib import Path
 import httpx
-from tools.mcp_adapter import mcp_adapter  # Import our MCP adapter
+from tools.mcp_adapter import mcp_adapter, _ssl_verify
 
 logger = logging.getLogger(__name__)
 
@@ -88,7 +88,7 @@ async def fetch_github_repositories(query: str, max_results: int, per_page: int,
     url = "https://api.github.com/search/repositories"
     repositories = []
     num_pages = max_results // per_page
-    async with httpx.AsyncClient() as client:
+    async with httpx.AsyncClient(verify=_ssl_verify()) as client:
         for page in range(1, num_pages + 1):
             params = {
                 "q": query,

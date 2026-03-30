@@ -10,9 +10,11 @@ logger = logging.getLogger(__name__)
 def normalize_scores(values):
     """
     Perform min–max normalization on a list of numeric values.
-    Returns a list of values scaled to [0, 1]. If the range is zero,
-    returns 0.5 for each value.
+    Returns a list of values scaled to [0, 1]. If the list is empty or the
+    range is zero, returns an empty list or 0.5 for each value respectively.
     """
+    if not values:
+        return []
     min_val = min(values)
     max_val = max(values)
     if max_val - min_val == 0:
@@ -21,6 +23,11 @@ def normalize_scores(values):
 
 
 def multi_factor_ranking(state, config):
+    if not state.filtered_candidates:
+        logger.warning("No candidates to rank.")
+        state.final_ranked = []
+        return {"final_ranked": []}
+
     # Gather raw scores from filtered candidates.
     semantic_scores = [repo.get("semantic_similarity", 0) for repo in state.filtered_candidates]
     cross_encoder_scores = [repo.get("cross_encoder_score", 0) for repo in state.filtered_candidates]

@@ -41,6 +41,6 @@ def threshold_filtering(state, config):
     state.filtered_candidates = filtered
     logger.info(
         f"Filtering complete: {len(filtered)} candidates remain "
-        f"(after thresholds{' + hardware filter' if state.hardware_spec else ''})."
+        f"(after thresholds{' + hardware filter' if getattr(state, 'hardware_spec', None) else ''})."
     )
     return {"filtered_candidates": filtered}

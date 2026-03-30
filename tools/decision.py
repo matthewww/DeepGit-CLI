@@ -1,4 +1,4 @@
-from langchain_groq import ChatGroq
+from langchain_anthropic import ChatAnthropic
 from langchain_core.prompts import ChatPromptTemplate
 import os
 from dotenv import load_dotenv
@@ -10,11 +10,10 @@ if dotenv_path.exists():
     load_dotenv(dotenv_path)
 
 # LLM setup: DeepSeek-R1-Distill
-llm = ChatGroq(
-    model="deepseek-r1-distill-llama-70b",
+llm = ChatAnthropic(
+    model="claude-haiku-4-5-20251001",
     temperature=0.3,
     max_tokens=512,
-    max_retries=2,
 )
 
 # Prompt for decision making

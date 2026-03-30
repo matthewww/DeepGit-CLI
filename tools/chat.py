@@ -1,6 +1,6 @@
 import os
 import re
-from langchain_groq import ChatGroq
+from langchain_anthropic import ChatAnthropic
 from langchain_core.prompts import ChatPromptTemplate
 from dotenv import load_dotenv
 from pathlib import Path
@@ -11,11 +11,10 @@ if dotenv_path.exists():
     load_dotenv(dotenv_path)
 
 # Step 1: Instantiate the Groq model with appropriate settings.
-llm = ChatGroq(
-    model="deepseek-r1-distill-llama-70b",
+llm = ChatAnthropic(
+    model="claude-haiku-4-5-20251001",
     temperature=0.3,
     max_tokens=512,
-    max_retries=3,
 )
 
 # Step 2: Build the prompt with enhanced instructions for iterative thinking and target language detection.

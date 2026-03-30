@@ -47,6 +47,8 @@ def cross_encoder_reranking(state, config):
         
         # Postprocessing: Shift all scores upward if any are negative.
         all_scores = [candidate["cross_encoder_score"] for candidate in candidates]
+        if not all_scores:
+            return []
         min_score = min(all_scores)
         if min_score < 0:
             shift = -min_score

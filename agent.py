@@ -62,6 +62,7 @@ class AgentStateInput:
 @dataclass(kw_only=True)
 class AgentStateOutput:
     final_results: str = field(default="")
+    final_ranked_data: List[Any] = field(default_factory=list)
 
 class AgentConfiguration(BaseModel):
     max_results: int = Field(100, title="Max Results", description="Max GitHub results")

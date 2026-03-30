@@ -4,6 +4,8 @@ import json
 import time
 import threading
 import logging
+import truststore
+truststore.inject_into_ssl()
 from agent import graph  # Your DeepGit langgraph workflow
 
 # ---------------------------
