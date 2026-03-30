@@ -6,9 +6,9 @@ class DummyState:
     def __init__(self):
         # Create dummy filtered_candidates with varying scores.
         self.filtered_candidates = [
-            {"semantic_similarity": 0.8, "cross_encoder_score": 7.0, "activity_score": 5.0, "code_quality_score": 90, "stars": 100},
-            {"semantic_similarity": 0.6, "cross_encoder_score": 8.0, "activity_score": 3.0, "code_quality_score": 80, "stars": 50},
-            {"semantic_similarity": 0.9, "cross_encoder_score": 6.0, "activity_score": 7.0, "code_quality_score": 95, "stars": 150}
+            {"semantic_similarity": 0.8, "cross_encoder_score": 7.0, "activity_score": 5.0, "stars": 100},
+            {"semantic_similarity": 0.6, "cross_encoder_score": 8.0, "activity_score": 3.0, "stars": 50},
+            {"semantic_similarity": 0.9, "cross_encoder_score": 6.0, "activity_score": 7.0, "stars": 150}
         ]
         self.final_ranked = []
 

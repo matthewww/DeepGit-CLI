@@ -1,21 +1,16 @@
 import os
 import re
-from langchain_anthropic import ChatAnthropic
 from langchain_core.prompts import ChatPromptTemplate
 from dotenv import load_dotenv
 from pathlib import Path
+from tools.llm import build_llm
 
 # Load environment variables
 dotenv_path = Path(__file__).resolve().parent.parent / ".env"
 if dotenv_path.exists():
     load_dotenv(dotenv_path)
 
-# Step 1: Instantiate the Groq model with appropriate settings.
-llm = ChatAnthropic(
-    model="claude-haiku-4-5-20251001",
-    temperature=0.3,
-    max_tokens=512,
-)
+llm = build_llm()
 
 # Step 2: Build the prompt with enhanced instructions for iterative thinking and target language detection.
 prompt = ChatPromptTemplate.from_messages([
@@ -110,9 +105,11 @@ def parse_search_tags(response: str) -> str:
     if "<think>" in response and "</think>" in response:
         end_index = response.index("</think>") + len("</think>")
         tags = response[end_index:].strip()
-        return tags
     else:
-        return response.strip()
+        tags = response.strip()
+    # Take only the first non-empty line — models sometimes append explanatory text.
+    tags = next((line.strip() for line in tags.splitlines() if line.strip()), tags)
+    return tags
 
 # Step 5: Helper function to validate the output tags format using regex.
 def valid_tags(tags: str) -> bool:

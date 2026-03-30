@@ -69,10 +69,10 @@ def repository_activity_analysis(state, config):
         return repo
     
     activity_list = []
-    # It is assumed that activity analysis runs on filtered candidates.
     for repo in state.filtered_candidates:
         data = analyze_repository_activity(repo)
         activity_list.append(data)
-    state.activity_candidates = activity_list
+    # Write activity scores back into filtered_candidates so multi_factor_ranking can use them.
+    state.filtered_candidates = activity_list
     logger.info("Repository activity analysis complete.")
-    return {"activity_candidates": state.activity_candidates}
+    return {"filtered_candidates": state.filtered_candidates}

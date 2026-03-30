@@ -32,32 +32,28 @@ def multi_factor_ranking(state, config):
     semantic_scores = [repo.get("semantic_similarity", 0) for repo in state.filtered_candidates]
     cross_encoder_scores = [repo.get("cross_encoder_score", 0) for repo in state.filtered_candidates]
     activity_scores = [repo.get("activity_score", -100) for repo in state.filtered_candidates]
-    quality_scores = [repo.get("code_quality_score", 0) for repo in state.filtered_candidates]
     star_scores = [math.log(repo.get("stars", 0) + 1) for repo in state.filtered_candidates]
-    
+
     # Normalize each set of scores using the helper function.
     norm_sem_scores = normalize_scores(semantic_scores)
     norm_ce_scores = normalize_scores(cross_encoder_scores)
     norm_act_scores = normalize_scores(activity_scores)
-    norm_quality_scores = normalize_scores(quality_scores)
     norm_star_scores = normalize_scores(star_scores)
-    
-    # Define weights for each signal.
+
+    # Weights: cross-encoder (relevance), semantic similarity, activity, star popularity.
     weights = {
-        "cross_encoder": 0.30,
-        "semantic": 0.20,
-        "activity": 0.15,
-        "quality": 0.15,
-        "stars": 0.20
+        "cross_encoder": 0.35,
+        "semantic": 0.25,
+        "activity": 0.20,
+        "stars": 0.20,
     }
-    
+
     # Combine the normalized scores using the defined weights.
     for idx, repo in enumerate(state.filtered_candidates):
         repo["final_score"] = (
             weights["cross_encoder"] * norm_ce_scores[idx] +
             weights["semantic"] * norm_sem_scores[idx] +
             weights["activity"] * norm_act_scores[idx] +
-            weights["quality"] * norm_quality_scores[idx] +
             weights["stars"] * norm_star_scores[idx]
         )
     

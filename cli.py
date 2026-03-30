@@ -1,11 +1,13 @@
 #!/usr/bin/env python3
 """
-DeepGit CLI — agent-friendly interface to the DeepGit agentic search workflow.
+DeepGit CLI — agent-friendly interface to the DeepGit semantic search pipeline.
 
 Usage:
-    python cli.py "LLM fine-tuning with LoRA"
-    python cli.py "RAG pipelines" --format json --top 5
-    python cli.py "YOLO object detection" --min-stars 200 --quiet
+    deepgit "LLM fine-tuning with LoRA"
+    deepgit "RAG pipelines" --format json --top 5
+    deepgit "YOLO object detection" --min-stars 200 --quiet
+    deepgit "vector databases" --model claude-haiku-4-5-20251001
+    deepgit "rust async runtimes" --model gpt-4o-mini
 
 Exit codes:
     0  Results returned successfully
@@ -24,7 +26,20 @@ truststore.inject_into_ssl()
 
 from dotenv import load_dotenv
 
-load_dotenv(Path(__file__).resolve().parent.parent / ".env")
+def _load_dotenv() -> None:
+    """Search for .env in CWD, then user home, then project folder (dev fallback)."""
+    candidates = [
+        Path.cwd() / ".env",
+        Path.home() / ".deepgit.env",
+        Path(__file__).resolve().parent / ".env",          # installed alongside cli.py
+        Path(__file__).resolve().parent.parent / ".env",   # dev: repo root
+    ]
+    for path in candidates:
+        if path.exists():
+            load_dotenv(path)
+            return
+
+_load_dotenv()
 
 # Silence all loggers when --quiet is requested (must happen before agent import)
 def _configure_logging(quiet: bool) -> None:
@@ -81,6 +96,15 @@ def _build_parser() -> argparse.ArgumentParser:
         action="store_true",
         help="Suppress all log output. Results still go to stdout.",
     )
+    parser.add_argument(
+        "--model",
+        default=None,
+        metavar="MODEL",
+        help=(
+            "LLM model for query expansion. Overrides DEEPGIT_LLM_MODEL env var. "
+            "Examples: claude-haiku-4-5-20251001, gpt-4o-mini, llama3 (with Ollama)."
+        ),
+    )
     return parser
 
 
@@ -99,7 +123,6 @@ def _format_json(query: str, result: dict, top: int) -> str:
                     "semantic_similarity": round(float(repo.get("semantic_similarity", 0)), 4),
                     "cross_encoder": round(float(repo.get("cross_encoder_score", 0)), 4),
                     "activity": round(float(repo.get("activity_score", 0)), 4),
-                    "code_quality": repo.get("code_quality_score", 0),
                     "final": round(float(repo.get("final_score", 0)), 4),
                 },
                 "description": repo.get("combined_doc", "")[:400],
@@ -136,6 +159,10 @@ def main() -> int:
     args = parser.parse_args()
 
     _configure_logging(args.quiet)
+
+    # Set LLM model override before any agent import so tools/llm.py picks it up.
+    if args.model:
+        os.environ["DEEPGIT_LLM_MODEL"] = args.model
 
     # Build configurable overrides for AgentConfiguration
     configurable: dict = {}

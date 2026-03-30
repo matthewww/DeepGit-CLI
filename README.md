@@ -1,157 +1,146 @@
-<h1 align="center">
-  <img src="https://img.icons8.com/?size=100&id=118557&format=png&color=000000" width="72" style="vertical-align: middle;"/> DeepGit
-</h1>
+# DeepGit CLI
 
+Deep semantic search across GitHub repositories. Designed for use by coding agents
+(GitHub Copilot CLI, Claude Code, opencode, etc.) and terminal power users.
 
-<p align="center">
-  <img src="assets/workflow.png" alt="Langgraph Workflow Diagram" style="max-width: 800px; width: 100%; height: auto;" />
-</p>
-
-### DeepGit 2.0 🤯 — now **hardware‑aware** & **ColBERT‑powered**
-
-## DeepGit
-
-**DeepGit** is an advanced, Langgraph-based agentic workflow designed to perform deep research across GitHub repositories. It intelligently searches, analyzes, and ranks repositories based on user intent—even uncovering less-known but highly relevant tools. DeepGit infuses hybrid dense retrieval with advanced cross-encoder re-ranking and comprehensive activity analysis into a unified, open-source platform for intelligent repository discovery
-
----
-### Try out the Lite version here 🧑‍🎓
-
-DeepGit-lite is a lightweight version of DeepGit running on zero GPU on Hugging Face Space [here.](https://huggingface.co/spaces/zamal/DeepGit) <br>
-It may not perform as well as the full version, but it's great for a quick first-hand preview.
-
----
-
-
-The latest release makes it even **deeper, smarter, and faster**:
-
-| New feature | What it gives you |
-|-------------|------------------|
-| **⚛️ Multi‑dimensional ColBERT v2 embeddings** | Fine‑grained token‑level similarity for nuanced matches that single‑vector embeddings miss. |
-| **🔩 Smart Hardware Filter** | Tell DeepGit your device specs — CPU-only, low RAM, or mobile. It filters out repos that won’t run smoothly, so you only see ones that fit your setup. |
-
-DeepGit still unifies hybrid dense retrieval, cross‑encoder re‑ranking, activity & quality analysis—but now every step is both *smarter* and *leaner*.
-
----
-
-## ⚙️ How It Works — Agentic Workflow *v2*
-
-When the user submits a query, the **DeepGit Orchestrator Agent** triggers a relay of expert tools:
-
-1. **Query Expansion**  
-   An LLM turns your natural‑language question into high‑signal GitHub tags for precise searching.
-
-2. **Hardware Spec Detector**  
-   The same pass infers your wording for hints like “GPU‑poor”, “low‑memory”, or “mobile‑only” and records the constraint.
-
-3. **ColBERT‑v2 Semantic Retriever**  
-   Every README & doc block is embedded with multi‑dimensional token vectors; MaxSim scoring surfaces nuanced matches.
-
-4. **Cross‑Encoder Re‑ranker**  
-   A lightweight BERT (`MiniLM‑L‑6‑v2`) re‑orders the top K results for passage‑level accuracy.
-
-5. **Hardware‑aware Dependency Filter**  
-   The reasoning engine inspects each repo’s `requirements.txt` / `pyproject.toml` and discards any that can’t run on your declared hardware.
-
-6. **Community & Code Insight**  
-   Collects stars, forks, issue cadence, commit history, plus quick code‑quality metrics.
-
-7. **Multi‑factor Ranking & Delivery**  
-   Merges all scores into one ranking and serves a clean table with links, similarity %, and “Runs on cpu‑only” badges where relevant.
-
----
-
-
-## 🚀 Goals
-
-- **Uncover Hidden Gems:**  
-  Surface powerful but under-the-radar open-source tools. Now comes with hardware spec filter too.
-
-- **Empower Research:**  
-  Build an intelligent discovery layer over GitHub tailored for research-focused developers.
-
-- **Promote Open Innovation:**  
-  Open-source the entire workflow to foster transparency and collaboration in research.
-
----
-
-## 🖥️ User Interface
-
-DeepGit provides an intuitive interface for exploring repository recommendations. The main page where users enter raw natural language query. This is the primary interaction point for initiating deep semantic searches.
-
-<p align="center">
-  <img src="assets/dashboard.png" alt="DeepGit Dashboard" style="max-width: 800px; width: 100%; height: auto;" />
-</p>
-
-*Output:* Showcases the tabulated results with clickable links and different threshold scores, making it easy to compare and understand the ranking criteria.
-
-
-<p align="center">
-  <img src="assets/output.png" alt="DeepGit App UI" style="max-width: 800px; width: 100%; height: auto;" />
-</p>
-
----
-
-
-### 🔧 Recommended Environment
-
-- **Python:** 3.11+ (The repo has been tested on Python 3.11.x)
-- **pip:** 24.0+ (Ensure you have an up-to-date pip version)
-
----
-
-### 👨‍🏭 Setup Instructions
-
-#### 1. Clone the Repository
-```bash
-git clone https://github.com/zamalali/DeepGit.git
-cd DeepGit
-```
-
-#### 2. Create a Virtual Environment (Recommended)
-```bash
-python3 -m venv venv
-source venv/bin/activate   # On Windows: venv\Scripts\activate
-```
-
-#### 3. Upgrade pip (Optional but Recommended)
-```bash
-pip install --upgrade pip
-```
-
-#### 4. Install Dependencies
-```bash
-pip install -r requirements.txt
-```
-
-#### 5. 🚀 Running DeepGit via App
-
-To run DeepGit locally, simply execute:
+## Install
 
 ```bash
-python app.py
+pip install .
 ```
 
+This installs `deepgit` as a command on your PATH.
 
-### 🛠️ Troubleshooting
+## Required: API keys
 
-- **Python Version:** Use Python 3.11 or higher as the repo has been tested on Python 3.11.x.
-- **pip Version:** Make sure you’re running pip 24.0 or later.
-- **Dependency Issues:** If you encounter any, try reinstalling in a new virtual environment.
+You need two keys — one for GitHub, one for the LLM used to expand your query into
+GitHub search tags.
 
+| Key | Where to get it | Cost |
+|---|---|---|
+| `GITHUB_API_KEY` | [github.com/settings/tokens](https://github.com/settings/tokens) — classic PAT, no special scopes needed | Free |
+| `GROQ_API_KEY` *(recommended)* | [console.groq.com](https://console.groq.com) — sign up, create key | Free tier |
+| `ANTHROPIC_API_KEY` | [console.anthropic.com](https://console.anthropic.com) | Paid |
 
----
-
-### 🛠️ Running DeepGit
-
-For a detailed documentation on using DeepGit, Check out [here](docs).
-
-DeepGit leverages Langgraph for orchestration. To launch the Langsmith dashboard and start the workflow, simply run:
-
+**Quickest free setup:**
 ```bash
-langgraph dev
+cp .env ~/.deepgit.env
+# edit ~/.deepgit.env:
+#   GITHUB_API_KEY=ghp_...
+#   GROQ_API_KEY=gsk_...
+#   DEEPGIT_LLM_MODEL=llama-3.1-8b-instant
+#   DEEPGIT_LLM_BASE_URL=https://api.groq.com/openai/v1
 ```
-This command opens the Langsmith dashboard where you can enter your raw queries in a JSON snippet and monitor the entire agentic workflow.
 
+**No-account local setup (Ollama):**
+```bash
+# Install ollama from https://ollama.com, then:
+ollama pull llama3
+# In ~/.deepgit.env:
+#   GITHUB_API_KEY=ghp_...
+#   DEEPGIT_LLM_MODEL=llama3
+#   DEEPGIT_LLM_BASE_URL=http://localhost:11434/v1
+```
 
-### DeepGit on Docker
-For instructions on using Docker with DeepGit, please refer to our [Docker Documentation](docs/docker.md).
+## Options
+
+| Flag | Default | Description |
+|---|---|---|
+| `query` | — | Natural language search query (required) |
+| `--format text\|json` | `text` | Output format. Use `json` for machine-readable results |
+| `--top N` | `10` | Number of top repositories to return |
+| `--min-stars N` | `50` | Minimum star count filter |
+| `--max-results N` | `100` | Max GitHub results to fetch before ranking |
+| `--model MODEL` | env var | LLM model for query expansion (overrides `DEEPGIT_LLM_MODEL`) |
+| `--quiet` | off | Suppress all log output (results still go to stdout) |
+
+## Exit codes
+
+| Code | Meaning |
+|---|---|
+| `0` | Results returned successfully |
+| `1` | No results found |
+| `2` | Error during execution |
+
+## Environment variables
+
+| Variable | Required | Description |
+|---|---|---|
+| `GITHUB_API_KEY` | **Yes** | GitHub personal access token |
+| `ANTHROPIC_API_KEY` | For Claude | Anthropic API key |
+| `OPENAI_API_KEY` | For OpenAI models | OpenAI API key |
+| `GROQ_API_KEY` | For Groq | Groq API key |
+| `DEEPGIT_LLM_MODEL` | No | Model name (e.g. `llama-3.1-8b-instant`, `claude-haiku-4-5-20251001`) |
+| `DEEPGIT_LLM_BASE_URL` | No | OpenAI-compatible base URL for Groq/Ollama/LM Studio |
+
+`.env` is loaded from the first location found (in order):
+
+1. Current working directory (`.env`) — recommended for per-project keys
+2. User home (`~/.deepgit.env`) — recommended for global install
+3. Same directory as the installed `cli.py`
+4. Parent of `cli.py` (dev / repo-root fallback)
+
+## LLM providers
+
+| Provider | Key var | `DEEPGIT_LLM_BASE_URL` | Example model |
+|---|---|---|---|
+| **Groq** *(recommended, free)* | `GROQ_API_KEY` | `https://api.groq.com/openai/v1` | `llama-3.1-8b-instant` |
+| **Ollama** *(local, no key)* | — | `http://localhost:11434/v1` | `llama3` |
+| **OpenAI** | `OPENAI_API_KEY` | *(leave unset)* | `gpt-4o-mini` |
+| **Anthropic** | `ANTHROPIC_API_KEY` | *(leave unset)* | `claude-haiku-4-5-20251001` |
+
+Pass `--model MODEL` to override inline without changing your `.env`.
+
+## JSON output schema
+
+```json
+{
+  "query": "...",
+  "total_returned": 5,
+  "results": [
+    {
+      "rank": 1,
+      "title": "owner/repo",
+      "url": "https://github.com/owner/repo",
+      "stars": 12345,
+      "scores": {
+        "semantic_similarity": 0.8123,
+        "cross_encoder": 8.42,
+        "activity": 14.5,
+        "final": 0.7841
+      },
+      "description": "First 400 chars of README..."
+    }
+  ]
+}
+```
+
+## Pipeline
+
+```
+convert_searchable_query      LLM expands query to GitHub search tags
+ingest_github_repos           Async GitHub API fetch (README + docs)
+neural_dense_retrieval        ColBERT-v2 embeddings + BM25 + FAISS (hybrid)
+cross_encoder_reranking       MiniLM cross-encoder re-ranks top 100 to top 50
+threshold_filtering           Drops repos below min_stars + cross-encoder threshold
+repository_activity_analysis  PR count, commit frequency, activity score
+multi_factor_ranking          Weighted: xenc 35% · semantic 25% · activity 20% · stars 20%
+output_presentation           Formats top-N results
+```
+
+All ML models run locally (SentenceTransformers, FAISS). No external ML API calls beyond the LLM.
+
+## Agent usage tips
+
+- Use `--format json --quiet` for clean machine-readable output with no log noise
+- Use `--top 3` for fast single-pick selection
+- Use `--min-stars 100` to bias toward established projects
+- Set `DEEPGIT_LLM_MODEL` to your agent's native model to avoid a second API provider
+
+## Origin
+
+Forked from [zamalali/DeepGit](https://github.com/zamalali/DeepGit).
+
+**Removed:** Gradio web UI, Docker, code quality analysis (flake8 cloning), dependency analysis, hardware filtering, decision maker, merge analysis stages.
+
+**Changed:** LLM is now configurable via env vars (Groq/Ollama/OpenAI/Anthropic); installable as a `deepgit` CLI command via `pyproject.toml`; ranking weights rebalanced without code quality signal.

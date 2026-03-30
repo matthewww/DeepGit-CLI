@@ -37,7 +37,7 @@ def test_repository_activity_analysis(monkeypatch):
     config = DummyConfig().__dict__
     result = repository_activity_analysis(state, config)
     # Each candidate should now have an "activity_score" key.
-    for repo in state.activity_candidates:
+    for repo in state.filtered_candidates:
         assert "activity_score" in repo
         # Since the dummy returns 2 PRs and a commit 10 days ago, score should be computed.
         assert isinstance(repo["activity_score"], float)
