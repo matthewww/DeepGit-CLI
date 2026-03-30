@@ -117,15 +117,16 @@ Pass `--model MODEL` to override inline without changing your `.env`.
 
 ## Pipeline
 
-```
-convert_searchable_query      LLM expands query to GitHub search tags
-ingest_github_repos           Async GitHub API fetch (README + docs)
-neural_dense_retrieval        ColBERT-v2 embeddings + BM25 + FAISS (hybrid)
-cross_encoder_reranking       MiniLM cross-encoder re-ranks top 100 to top 50
-threshold_filtering           Drops repos below min_stars + cross-encoder threshold
-repository_activity_analysis  PR count, commit frequency, activity score
-multi_factor_ranking          Weighted: xenc 35% · semantic 25% · activity 20% · stars 20%
-output_presentation           Formats top-N results
+```mermaid
+flowchart TD
+    A([User Query]) --> B[convert_searchable_query\nLLM → GitHub search tags]
+    B --> C[ingest_github_repos\nAsync GitHub API · README + docs]
+    C --> D[neural_dense_retrieval\nColBERT-v2 · BM25 · FAISS hybrid]
+    D --> E[cross_encoder_reranking\nMiniLM · top 100 → top 50]
+    E --> F[threshold_filtering\nmin_stars · cross-encoder cutoff]
+    F --> G[repository_activity_analysis\nPR count · commit frequency]
+    G --> H[multi_factor_ranking\nxenc 35% · semantic 25% · activity 20% · stars 20%]
+    H --> I([Top-N Results])
 ```
 
 All ML models run locally (SentenceTransformers, FAISS). No external ML API calls beyond the LLM.
